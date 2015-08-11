@@ -36,7 +36,7 @@ print(hotp:get_url("luaotp sample", "user"))
 
 while true do
   print"Type in a code:"
-  local code = io.stdin:read("*l")
+  local code = io.stdin:read"*l"
   if not code or code == "" then break end
 
   if hotp:verify(code) then
