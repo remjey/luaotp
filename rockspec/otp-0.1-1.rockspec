@@ -14,7 +14,7 @@ description = {
 }
 source = {
   url = "git://github.com/remjey/luaotp",
-  tag = "v0.1",
+  tag = "v0.1-1",
 }
 dependencies = {
   "lua ~> 5.1",
