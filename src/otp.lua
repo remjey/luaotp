@@ -70,15 +70,23 @@ M._private = {
 
 local totpmt = {}
 
-function M.new_totp(key_length, digits, period)
+local function new_totp_from_key(key, digits, period)
   local r = {
     type = "totp",
-    key = rb(key_length or default_key_length),
+    key = key,
     digits = digits or default_digits,
     period = period or default_period,
   }
-  setmetatable(r, { __index = totpmt })
+  setmetatable(r, { __index = totpmt, __tostring = totpmt.serialize })
   return r
+end
+
+function M.new_totp(key_length, digits, period)
+  return new_totp_from_key(rb(key_length or default_key_length), digits, period)
+end
+
+function M.new_totp_from_key(key, digits, period)
+  return new_totp_from_key(bxx.from_base32(key), digits, period)
 end
 
 function totpmt:generate(deviation)
@@ -121,15 +129,23 @@ end
 
 local hotpmt = {}
 
-function M.new_hotp(key_length, digits, counter)
+local function new_hotp_from_key(key, digits, counter)
   local r = {
     type = "hotp",
-    key = rb(key_length or default_key_length),
+    key = key,
     digits = digits or default_digits,
     counter = counter or 0,
   }
-  setmetatable(r, { __index = hotpmt })
+  setmetatable(r, { __index = hotpmt, __tostring = hotpmt.serialize })
   return r
+end
+
+function M.new_hotp(key_length, digits, counter)
+  return new_hotp_from_key(rb(key_length or default_key_length), digits, counter)
+end
+
+function M.new_hotp_from_key(key, digits, counter)
+  return new_hotp_from_key(bxx.from_base32(key), digits, counter)
 end
 
 function hotpmt:generate(counter_value)
@@ -217,6 +233,12 @@ function M.read(str)
     error("Unsupported protocol")
   end
 end
+
+local function get_key(key)
+  return bxx.to_base32(key.key)
+end
+hotpmt.get_key = get_key
+totpmt.get_key = get_key
 
 return M
 

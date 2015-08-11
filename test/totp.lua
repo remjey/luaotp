@@ -1,6 +1,7 @@
 local otp = require"otp"
 
 local sample_key = "totp:1:GK0rXHy4oBrDWxJxsmur:6:30:"
+local sample_key_b32 = "DCWSWXD4XCQBVQ23CJY3E25L"
 local sample_key_url = "otpauth://totp/lua%20otp:J%C3%A9r%C3%A9my?secret=DCWSWXD4XCQBVQ23CJY3E25L&issuer=82a9cfef2760fa&period=30&digits=6"
 
 local test_epoch = 1439312195
@@ -17,6 +18,10 @@ describe("TOTP tests:", function ()
   it("Deserialize and serialize key", function ()
     key = otp.read(sample_key)
     assert.is_not_nil(key)
+    assert(key:serialize() == sample_key)
+    assert(key:get_key() == sample_key_b32)
+
+    key = otp.new_totp_from_key(sample_key_b32)
     assert(key:serialize() == sample_key)
   end)
 

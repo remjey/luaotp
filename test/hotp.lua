@@ -1,6 +1,8 @@
 local otp = require"otp"
 
+local sample_counter = 256
 local sample_key = "hotp:1:lbKiV5EPVZgWXJ+YYSIJ:6:256:"
+local sample_key_b32 = "SWZKEV4RB5KZQFS4T6MGCIQJ"
 local sample_key_url = "otpauth://hotp/lua%20otp:J%C3%A9r%C3%A9my?secret=SWZKEV4RB5KZQFS4T6MGCIQJ&issuer=82a9cfef2760fa&counter=258&digits=6"
 local expected_code = "160496"
 
@@ -15,6 +17,10 @@ describe("HOTP tests:", function ()
   it("Deserialize and serialize key", function ()
     key = otp.read(sample_key)
     assert.is_not_nil(key)
+    assert(key:serialize() == sample_key)
+    assert(key:get_key() == sample_key_b32)
+
+    key = otp.new_hotp_from_key(sample_key_b32, nil, sample_counter)
     assert(key:serialize() == sample_key)
   end)
 
