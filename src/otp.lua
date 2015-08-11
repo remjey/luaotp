@@ -70,10 +70,10 @@ M._private = {
 
 local totpmt = {}
 
-function M.new_totp(length, digits, period)
+function M.new_totp(key_length, digits, period)
   local r = {
     type = "totp",
-    key = rb(length or default_key_length),
+    key = rb(key_length or default_key_length),
     digits = digits or default_digits,
     period = period or default_period,
   }
@@ -121,10 +121,10 @@ end
 
 local hotpmt = {}
 
-function M.new_hotp(length, digits, counter)
+function M.new_hotp(key_length, digits, counter)
   local r = {
     type = "hotp",
-    key = rb(length or default_key_length),
+    key = rb(key_length or default_key_length),
     digits = digits or default_digits,
     counter = counter or 0,
   }
