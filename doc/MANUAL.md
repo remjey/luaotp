@@ -142,7 +142,7 @@ The ``:get_url()`` method generates an URL that can be directly converted into a
 ```lua
 local otp = require"otp"
 totp = otp.new_totp()
-local h = io.popen("qrencode -o- " .. totp:get_url("service name", "user name"), "r")
+local h = io.popen("qrencode -o- \"" .. totp:get_url("service name", "user name") .. "\"", "r")
 local png_data = h:read"*a"
 h:close()
 ```
