@@ -1,8 +1,8 @@
 
 local M = {}
 
-local rb = require"randbytes"
 local bxx = require"basexx"
+local rand = require"crypto".rand
 local hmac = require"crypto".hmac
 
 ------ Defaults ------
@@ -82,7 +82,7 @@ local function new_totp_from_key(key, digits, period)
 end
 
 function M.new_totp(key_length, digits, period)
-  return new_totp_from_key(rb(key_length or default_key_length), digits, period)
+  return new_totp_from_key(rand.bytes(key_length or default_key_length), digits, period)
 end
 
 function M.new_totp_from_key(key, digits, period)
@@ -141,7 +141,7 @@ local function new_hotp_from_key(key, digits, counter)
 end
 
 function M.new_hotp(key_length, digits, counter)
-  return new_hotp_from_key(rb(key_length or default_key_length), digits, counter)
+  return new_hotp_from_key(rand.bytes(key_length or default_key_length), digits, counter)
 end
 
 function M.new_hotp_from_key(key, digits, counter)
