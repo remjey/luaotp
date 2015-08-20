@@ -17,7 +17,7 @@ source = {
   tag = "v0.1-2",
 }
 dependencies = {
-  "lua ~> 5.1",
+  "lua => 5.1",
   "luacrypto ~> 0.3",
   "basexx >= 0.1",
 }
