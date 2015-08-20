@@ -26,6 +26,6 @@ build = {
   modules = {
     otp = "src/otp.lua",
   },
-  copy_directories = { "doc", "test" },
+  copy_directories = { "doc", "spec" },
 }
 
