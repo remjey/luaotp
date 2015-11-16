@@ -1,5 +1,5 @@
 package = "otp"
-version = "0.1-2"
+version = "0.1-3"
 description = {
   summary = "A simple implementation of OATH-HOTP and OATH-TOTP.",
   detailed = [[
@@ -14,11 +14,11 @@ description = {
 }
 source = {
   url = "git://github.com/remjey/luaotp",
-  tag = "v0.1-2",
+  tag = "v0.1-3",
 }
 dependencies = {
   "lua >= 5.1",
-  "luacrypto ~> 0.3",
+  "luaossl",
   "basexx >= 0.1",
 }
 build = {
