@@ -2,8 +2,8 @@
 local M = {}
 
 local bxx = require"basexx"
-local rand = require"crypto".rand
-local hmac = require"crypto".hmac
+local rand = require"openssl.rand"
+local hmac = require"openssl.hmac"
 
 ------ Defaults ------
 
@@ -32,8 +32,8 @@ end
 -- Generates a one-time password based on a raw key and a counter
 local function generate(raw_key, counter, digits)
   local c = counter_format(counter)
-  local h = hmac.new("sha1", raw_key)
-  local sign = { h:final(c, true):byte(1, 20) }
+  local h = hmac.new(raw_key, "sha1")
+  local sign = { h:final(c):byte(1, 20) }
   local offset = 1 + sign[20] % 0x10
   local r = tostring(
     0x1000000 * (sign[offset] % 0x80) +
