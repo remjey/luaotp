@@ -5,6 +5,10 @@ local bxx = require"basexx"
 local rand = require"openssl.rand"
 local hmac = require"openssl.hmac"
 
+------ Lua 5.3 compatibility ------
+
+local unpack = unpack or table.unpack
+
 ------ Defaults ------
 
 local serializer_format_version = 1
@@ -33,7 +37,7 @@ end
 local function generate(raw_key, counter, digits)
   local c = counter_format(counter)
   local h = hmac.new(raw_key, "sha1")
-  local sign = { h:final(c):byte(1, 20) }
+  local sign = { h:update(c):final():byte(1, 20) }
   local offset = 1 + sign[20] % 0x10
   local r = tostring(
     0x1000000 * (sign[offset] % 0x80) +
@@ -76,6 +80,7 @@ local function new_totp_from_key(key, digits, period)
     key = key,
     digits = digits or default_digits,
     period = period or default_period,
+    counter = 0,
   }
   setmetatable(r, { __index = totpmt, __tostring = totpmt.serialize })
   return r
@@ -89,15 +94,27 @@ function M.new_totp_from_key(key, digits, period)
   return new_totp_from_key(bxx.from_base32(key), digits, period)
 end
 
+local function totp_generate(self, deviation)
+  local counter = math.floor(os.time() / self.period) + (deviation or 0)
+  return 
+    generate(self.key, counter, self.digits),
+    counter
+end
+
 function totpmt:generate(deviation)
-  return generate(self.key, math.floor(os.time() / self.period) + (deviation or 0), self.digits)
+  local r = totp_generate(self, deviation)
+  return r -- discard second value
 end
 
 function totpmt:verify(code, accepted_deviation)
   if #code ~= self.digits then return false end
   local ad = accepted_deviation or default_totp_deviation
   for d = -ad, ad do
-    if code == self:generate(d) then return true end
+    local verif_code, verif_counter = totp_generate(self, d)
+    if verif_counter >= self.counter and code == verif_code then
+      self.counter = verif_counter + 1
+      return true
+    end
   end
   return false
 end
@@ -121,6 +138,7 @@ function totpmt:serialize()
     ":", bxx.to_base64(self.key),
     ":", tostring(self.digits),
     ":", tostring(self.period),
+    ":", tostring(self.counter),
     ":"
   }
 end
@@ -210,6 +228,7 @@ function M.read(str)
         key = bxx.from_base64(items[3]),
         digits = tonumber(items[4]),
         period = tonumber(items[5]),
+        counter = tonumber(items[6] or "0"),
       }
       setmetatable(r, { __index = totpmt })
       return r

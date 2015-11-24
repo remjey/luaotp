@@ -88,6 +88,10 @@ The ``key`` must be encoded in base-32, ``digits`` defaults to 6 and ``period`` 
 TOTP uses ``os.time()`` as the source for the global time to generate and verify TOTP codes. It is therefore **essential** that **the system running
 the service is on time**. Consider activating services like NTP on your system to keep it on time.
 
+As an additional security mesure, the TOTP object will synchronize its internal counter to the counter used to generate a code that resulted in a
+positive verification. One code thus cannot be used twice in its period of validity. This internal counter is serialized and should be stored
+to persistant storage after each successful verification for this security mesure to be effective.
+
 ## Other functions
 
 + **``otp.read(str)``** creates a new HOTP or TOTP object from ``str``.
@@ -127,7 +131,7 @@ function login(env --[[ a WSAPI parsed request ]])
   local otp_object = otp.read(user.otp_data)
   if not otp_object:verify(env.POST.otp) then return false end
 
-  -- The 2 following lines are mandatory for HOTP, and useless for TOTP
+  -- The 2 following lines are mandatory for HOTP, and recommended for TOTP
   user.otp_data = otp_object:serialize()
   db.update_otp(user.id, user.otp_data)
 
@@ -155,6 +159,6 @@ This library was tested for compatibility with [FreeOTP](https://fedorahosted.or
 
 ### Big counters
 
-Lua 5.1 use 64-bit doubles for all numbers, so very high counter values (> 2^52 - 1) will cause errors because they use exponentiation and the low bits of the fraction part are lost. However, this should not occur under normal conditions of use.
+Lua <= 5.2 use 64-bit doubles for all numbers, so very high counter values (> 2^52 - 1) will cause errors because they use exponentiation and the low bits of the fraction part are lost. However, this should not occur under normal conditions of use.
 
 
