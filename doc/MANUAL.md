@@ -8,7 +8,7 @@ QR codes for easy transfer to smartphone applications.
 
 ## Requirements
 
-luaotp uses the LuaCrypto, basexx and randbytes libraries. It was written for Lua 5.1.
+luaotp uses the `luaossl` and `basexx`. It was written for Lua 5.1 but works towards Lua 5.3.
 
 ## Terminology
 
