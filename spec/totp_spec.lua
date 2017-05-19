@@ -8,10 +8,24 @@ local sample_key_url = "otpauth://totp/lua%20otp:J%C3%A9r%C3%A9my?secret=DCWSWXD
 local test_epoch = 1439312195
 local expected_code = "223468"
 
+local test_epoch_2 = 1238474822
+local expected_code_2 = "046183"
+
+local test_epoch_3 = { -- UNIX time: 1328194321
+  year=2012,
+  month=2,
+  day=2,
+  hour=15,
+  min=52,
+  sec=1,
+  isdst=false
+}
+local expected_code_3 = "393634"
+
 describe("TOTP tests:", function ()
   local key
 
-  it("Create key", function () 
+  it("Create key", function ()
     local key = otp.new_totp()
     assert.is_not_nil(key)
   end)
@@ -27,7 +41,28 @@ describe("TOTP tests:", function ()
   end)
 
   insulate("Setting os.time to a fixed value:", function()
-    os.time = function () return test_epoch end
+    local old_os_time = os.time
+    os.time = function (time)
+      if time then
+        return old_os_time(time)
+      else
+        return test_epoch
+      end
+    end
+
+    it("Generate code for fixed epoch using for_time number parameter and verify", function ()
+      local code = key:generate(nil, test_epoch_2);
+      assert(code == expected_code_2)
+      assert(not key:verify(code))
+      assert(key:verify(code, nil, test_epoch_2))
+    end)
+
+    it("Generate code for fixed epoch using for_time table parameter and verify", function ()
+      local code = key:generate(nil, test_epoch_3);
+      assert(code == expected_code_3)
+      assert(not key:verify(code))
+      assert(key:verify(code, nil, test_epoch_3))
+    end)
 
     it("Generate code for fixed epoch and verify", function ()
       local code = key:generate()
@@ -36,6 +71,11 @@ describe("TOTP tests:", function ()
       assert(not key:verify(code))
       code = key:generate(20)
       assert(not key:verify(code))
+    end)
+
+    it("Verify past code doesn’t get verified", function ()
+      local code = key:generate(nil, test_epoch_2);
+      assert(not key:verify(code, nil, test_epoch_2))
     end)
 
     it("Verify serialized counter", function ()
@@ -56,3 +96,4 @@ describe("TOTP tests:", function ()
   end)
 
 end)
+

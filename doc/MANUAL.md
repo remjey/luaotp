@@ -6,6 +6,12 @@ It implements RFCs 4226 and 6238 and is able to generate standard URLs to repres
 the authentication key with client programs or devices. These URLs can arso be embedded in
 QR codes for easy transfer to smartphone applications.
 
+## Author
+
+LuaOTP was written by [Jérémy Farnaud](http://jf.almel.fr/).
+
+If you like this project, you can either [Flattr](https://flattr.com/profile/remjey) or donate on [Liberapay](https://liberapay.com/remjey).
+
 ## Requirements
 
 luaotp uses the `luaossl` and `basexx`. It was written for Lua 5.1 but works towards Lua 5.3.
@@ -161,4 +167,9 @@ This library was tested for compatibility with [FreeOTP](https://fedorahosted.or
 
 Lua <= 5.2 use 64-bit doubles for all numbers, so very high counter values (> 2^52 - 1) will cause errors because they use exponentiation and the low bits of the fraction part are lost. However, this should not occur under normal conditions of use.
 
+## Testing
+
+The tests were made with the `busted` framework.
+You can install it using the command `luarocks install busted`.
+Simply change the current directory to the base of the project and run the `busted` command.
 

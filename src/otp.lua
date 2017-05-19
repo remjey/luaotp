@@ -94,9 +94,19 @@ function M.new_totp_from_key(key, digits, period)
   return new_totp_from_key(bxx.from_base32(key), digits, period)
 end
 
+local function get_time(param)
+  if type(param) == "table" then
+    return os.time(param)
+  elseif type(param) == "number" then
+    return param
+  else
+    return os.time()
+  end
+end
+
 local function totp_generate(self, deviation, for_time)
-  local counter = math.floor(os.time(for_time) / self.period) + (deviation or 0)
-  return 
+  local counter = math.floor(get_time(for_time) / self.period) + (deviation or 0)
+  return
     generate(self.key, counter, self.digits),
     counter
 end

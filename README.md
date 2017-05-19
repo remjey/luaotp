@@ -54,3 +54,5 @@ The documentation can be found in the doc folder.
 ---
 
 [Jérémy Farnaud](http://jf.almel.fr/)
+
+If you like this project, you can either [Flattr](https://flattr.com/profile/remjey) or donate on [Liberapay](https://liberapay.com/remjey).
