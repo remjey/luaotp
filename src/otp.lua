@@ -94,23 +94,23 @@ function M.new_totp_from_key(key, digits, period)
   return new_totp_from_key(bxx.from_base32(key), digits, period)
 end
 
-local function totp_generate(self, deviation)
-  local counter = math.floor(os.time() / self.period) + (deviation or 0)
+local function totp_generate(self, deviation, for_time)
+  local counter = math.floor(os.time(for_time) / self.period) + (deviation or 0)
   return 
     generate(self.key, counter, self.digits),
     counter
 end
 
-function totpmt:generate(deviation)
-  local r = totp_generate(self, deviation)
+function totpmt:generate(deviation, for_time)
+  local r = totp_generate(self, deviation, for_time)
   return r -- discard second value
 end
 
-function totpmt:verify(code, accepted_deviation)
+function totpmt:verify(code, accepted_deviation, for_time)
   if #code ~= self.digits then return false end
   local ad = accepted_deviation or default_totp_deviation
   for d = -ad, ad do
-    local verif_code, verif_counter = totp_generate(self, d)
+    local verif_code, verif_counter = totp_generate(self, d, for_time)
     if verif_counter >= self.counter and code == verif_code then
       self.counter = verif_counter + 1
       return true
