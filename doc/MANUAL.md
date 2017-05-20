@@ -75,11 +75,17 @@ The ``key_length`` is expressed in bytes and defaults to 15, ``digits`` defaults
 
 The ``key`` must be encoded in base-32, ``digits`` defaults to 6 and ``period`` to 30.
 
-* **``totp:generate()``** generates and returns the code valid at the time of the call.
+* **``totp:generate([deviation], [for_time])``** generates and returns the code valid at the time of the call
 
-* **``totp:verify(code, [accepted_deviation])``** returns true if the code is valid, false otherwise.
+An artificial deviation may be provided in `deviation`. Defaults is 0.
+
+The code can be generated for a specific time provided in `for_time`, which can either be a UNIX time or a table that can be passed to the `os.time()` function.
+
+* **``totp:verify(code, [accepted_deviation], [for_time])``** returns true if the code is valid at the time of the call, false otherwise.
 
 ``accepted_deviation`` is the accepted difference of time between the user and service systems. It is expressed in periods and defaults to 5.
+
+The code can be verified against a specific time provided in the `for_time` parameter, which can be either a UNIX time or a table that can be passed to the `os.time()` function.
 
 * **``totp:serialize()``** returns an ASCII representation of the object for use with ``otp.read()``
 
