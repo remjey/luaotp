@@ -130,7 +130,7 @@ function totpmt:verify(code, accepted_deviation, for_time)
 end
 
 function totpmt:get_url(issuer, account, issuer_uuid)
-  local key, issuer, account = url_encode(bxx.to_base32(self.key)), url_encode(issuer), url_encode(account)
+  local key, issuer, account = url_encode((bxx.to_base32(self.key):gsub('=', ''))), url_encode(issuer), url_encode(account)
   local issuer_uuid = issuer_uuid and url_encode(issuer_uuid) or issuer
   return table.concat{
     "otpauth://totp/",
@@ -196,7 +196,7 @@ function hotpmt:verify(code, accepted_deviation)
 end
 
 function hotpmt:get_url(issuer, account, issuer_uuid)
-  local key, issuer, account = url_encode(bxx.to_base32(self.key)), url_encode(issuer), url_encode(account)
+  local key, issuer, account = url_encode((bxx.to_base32(self.key):gsub('=', ''))), url_encode(issuer), url_encode(account)
   local issuer_uuid = issuer_uuid and url_encode(issuer_uuid) or issuer
   return table.concat{
     "otpauth://hotp/",
